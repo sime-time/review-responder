@@ -10,6 +10,7 @@
 
   let name = $state<string>("");
   let review = $state<string>("");
+  let rating = $state<number>(1);
   let tone = $state<ResponseType>("friendly");
   let customTonePrompt = $state<string>("");
   let generatedResponse = $state<string>("");
@@ -18,7 +19,7 @@
   // generate response based on selected tone
   async function generateResponse(): Promise<void> {
     isGenerating = true;
-    generatedResponse = "booty";
+    generatedResponse = "simeon";
     isGenerating = false;
   }
 
@@ -36,7 +37,7 @@
 <div class="max-w-4xl mx-auto p-4 mb-4">
   <h1 class="text-3xl font-bold mb-6 text-neutral">AI Review Responder</h1>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-2">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
     <!-- Review Section -->
     <div class="flex flex-col gap-3">
       <fieldset class="fieldset">
@@ -52,37 +53,18 @@
       </fieldset>
 
       <div class="rating rating-xl">
-        <input
-          type="radio"
-          name="star-rating"
-          class="mask mask-star-2 bg-orange-400"
-          aria-label="1 star"
-          checked={true}
-        />
-        <input
-          type="radio"
-          name="star-rating"
-          class="mask mask-star-2 bg-orange-400"
-          aria-label="2 star"
-        />
-        <input
-          type="radio"
-          name="star-rating"
-          class="mask mask-star-2 bg-orange-400"
-          aria-label="3 star"
-        />
-        <input
-          type="radio"
-          name="star-rating"
-          class="mask mask-star-2 bg-orange-400"
-          aria-label="4 star"
-        />
-        <input
-          type="radio"
-          name="star-rating"
-          class="mask mask-star-2 bg-orange-400"
-          aria-label="5 star"
-        />
+        {#each [1, 2, 3, 4, 5] as value}
+          <input
+            type="radio"
+            name="star-rating"
+            class="mask mask-star-2 bg-orange-400"
+            aria-label="{value} star"
+            checked={rating === value}
+            onclick={() => {
+              rating = value;
+            }}
+          />
+        {/each}
       </div>
 
       <fieldset class="fieldset">
