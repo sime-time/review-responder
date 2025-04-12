@@ -19,12 +19,12 @@ export const auth = betterAuth({
   plugins: [
     magicLink({
       sendMagicLink: async ({ email, url }) => {
-        console.log("domains:", resend.domains.list());
         const { data, error } = await resend.emails.send({
           from: "Simeon <support@webundance.com>",
           to: [email],
-          subject: "Hello World",
-          html: `<strong>It works! See where this goes.</strong>\n${url}`
+          subject: "Magic Link",
+          html: `<strong>It works! See where this goes.</strong>\n
+          <p><a href="${url}">${url}</a></p>`
         });
 
         if (error) {
@@ -33,6 +33,7 @@ export const auth = betterAuth({
           console.log(data);
         }
       },
+      disableSignUp: false,
     }),
   ],
 });

@@ -3,9 +3,8 @@
 
   let email = $state("");
 
-  const sendMagicLink = async (e: Event) => {
+  const emailMagicLink = async (e: Event) => {
     e.preventDefault();
-    console.log("email:", email);
     const { data, error } = await authClient.signIn.magicLink({
       email: email,
       callbackURL: "/review-responder",
@@ -36,7 +35,7 @@
       placeholder="johnsmith@email.com"
     />
     <button
-      onclick={(e: Event) => sendMagicLink(e)}
+      onclick={(e: Event) => emailMagicLink(e)}
       class="btn btn-neutral mt-4">Submit</button
     >
   </fieldset>
