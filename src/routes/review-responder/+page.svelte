@@ -1,13 +1,5 @@
 <script lang="ts">
-  import { Chat } from "@ai-sdk/svelte";
-  const chat = new Chat();
-
-  interface Review {
-    id: number;
-    text: string;
-    rating: number;
-    source: string;
-  }
+  //import { generateResponse } from "$lib/generate-response";
 
   type ResponseType = "friendly" | "professional" | "custom";
 
@@ -16,23 +8,35 @@
   let rating = $state<number>(1);
   let tone = $state<ResponseType>("friendly");
   let customTonePrompt = $state<string>("");
-  let generatedResponse = $state<string>("");
-  let isGenerating = $state<boolean>(false);
+  let reviewResponse = $state<string>("");
 
-  // generate response based on selected tone
-  async function generateResponse(): Promise<void> {
-    isGenerating = true;
-    generatedResponse = "simeon";
-    isGenerating = false;
+  // generate response to review
+  async function handleSubmit(): Promise<void> {
+    if (!name || !review || !rating || !tone) {
+      reviewResponse = "Please insert a review, name, and tone.";
+      return console.error("Invalid inputs for review");
+    }
+
+    /*
+    try {
+      const result = await generateResponse(review, name, rating, tone);
+      console.log(result);
+    } catch (err) {
+      console.error("Error:", err);
+      reviewResponse = "Failed to generate response. Please try again.";
+    }
+      */
   }
 
   function copyToClipboard(): void {
-    navigator.clipboard.writeText(generatedResponse);
+    navigator.clipboard.writeText(reviewResponse);
   }
 
   $effect(() => {
     $inspect(name);
     $inspect(review);
+    $inspect(rating);
+    $inspect(reviewResponse);
     $inspect(customTonePrompt);
   });
 </script>
@@ -41,7 +45,7 @@
   <h1 class="text-3xl font-bold mb-6 text-neutral">AI Review Responder</h1>
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <!-- Review Section -->
+    <!-- Review -->
     <div class="flex flex-col gap-3">
       <fieldset class="fieldset">
         <legend class="fieldset-legend text-lg font-medium">Review</legend>
@@ -55,6 +59,7 @@
         ></textarea>
       </fieldset>
 
+      <!-- Rating -->
       <div class="rating rating-xl">
         {#each [1, 2, 3, 4, 5] as value}
           <input
@@ -70,6 +75,7 @@
         {/each}
       </div>
 
+      <!-- Name -->
       <fieldset class="fieldset">
         <legend class="fieldset-legend text-lg font-medium">Name</legend>
         <input
@@ -83,44 +89,27 @@
         />
       </fieldset>
 
+      <!-- Tone -->
       <fieldset class="fieldset">
         <legend class="fieldset-legend text-lg font-medium">Tone</legend>
         <div class="flex gap-2 text-base">
-          <button
-            class="px-3 py-1 border rounded-field {tone === 'friendly'
-              ? 'bg-secondary/20 border-secondary'
-              : 'border-neutral-300'}"
-            onclick={() => {
-              tone = "friendly";
-            }}
-          >
-            Friendly
-          </button>
-
-          <button
-            class="px-3 py-1 border rounded-field {tone === 'professional'
-              ? 'bg-secondary/20 border-secondary'
-              : 'border-neutral-300'}"
-            onclick={() => {
-              tone = "professional";
-            }}
-          >
-            Professional
-          </button>
-
-          <button
-            class="px-3 py-1 border rounded-field {tone === 'custom'
-              ? 'bg-secondary/20 border-secondary'
-              : 'border-neutral-300'}"
-            onclick={() => {
-              tone = "custom";
-            }}
-          >
-            Custom
-          </button>
+          {#each ["friendly", "professional", "custom"] as toneType}
+            <button
+              class="capitalize px-3 py-1 border rounded-field {tone ===
+              toneType
+                ? 'bg-secondary/20 border-secondary'
+                : 'border-neutral-300'}"
+              onclick={() => {
+                tone = toneType as ResponseType;
+              }}
+            >
+              {toneType}
+            </button>
+          {/each}
         </div>
       </fieldset>
 
+      <!-- Custom Tone -->
       {#if tone === "custom"}
         <div>
           <textarea
@@ -135,14 +124,14 @@
       {/if}
     </div>
 
-    <!-- Response Section -->
+    <!-- Response -->
     <div class="flex flex-col gap-3">
       <div class="flex justify-between items-center">
         <h2 class="text-lg font-medium">Generated Response</h2>
         <button
           class="btn btn-secondary btn-soft btn-xs"
           onclick={copyToClipboard}
-          disabled={!generatedResponse}
+          disabled={!reviewResponse}
         >
           Copy
         </button>
@@ -150,18 +139,11 @@
 
       <textarea
         class="textarea h-48 w-full"
-        value={generatedResponse}
-        onchange={(event) => {
-          generatedResponse = event.currentTarget.value;
-        }}
-        hidden={!generatedResponse}
+        bind:value={reviewResponse}
+        hidden={!reviewResponse}
       ></textarea>
 
-      <button
-        class="btn btn-secondary btn-block"
-        onclick={generateResponse}
-        disabled={isGenerating}
-      >
+      <button class="btn btn-secondary btn-block" onclick={handleSubmit}>
         Get New Response
       </button>
     </div>

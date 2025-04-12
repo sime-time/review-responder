@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Chat } from "@ai-sdk/svelte";
-  const chat = new Chat();
+  const chat = new Chat({ maxSteps: 5 });
 </script>
 
 <main class="m-auto p-5">
@@ -12,6 +12,8 @@
           {#each message.parts as part, partIndex (partIndex)}
             {#if part.type === "text"}
               <div>{part.text}</div>
+            {:else if part.type === "tool-invocation"}
+              <pre>{JSON.stringify(part.toolInvocation, null, 2)}</pre>
             {/if}
           {/each}
         </div>
