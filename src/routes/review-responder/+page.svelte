@@ -1,4 +1,7 @@
 <script lang="ts">
+  import { Chat } from "@ai-sdk/svelte";
+  const chat = new Chat();
+
   interface Review {
     id: number;
     text: string;
@@ -117,6 +120,7 @@
           </button>
         </div>
       </fieldset>
+
       {#if tone === "custom"}
         <div>
           <textarea
