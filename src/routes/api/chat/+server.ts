@@ -1,13 +1,16 @@
 import { createOpenAI } from "@ai-sdk/openai";
-import { streamText } from "ai";
 import { OPENAI_API_KEY } from "$env/static/private";
+import { json } from "@sveltejs/kit";
+import type { RequestHandler } from "./$types";
+import { generateText } from "ai";
 
 const openai = createOpenAI({
   apiKey: OPENAI_API_KEY,
 });
 
-export async function POST({ request }) {
-  const { name, review, rating, tone } = await request.json();
+export const POST: RequestHandler = async ({ request }) => {
+  const { review, name, rating, tone } = await request.json();
+
   const prompt = `
 Write a thoughtful response to the following review.
 
@@ -22,6 +25,8 @@ TONE: ${tone}
 
 Guidelines:
 - Be authentic and personalized
+- Don't make it like a letter and start with Dear...,
+- Keep it brief and concise
 - Address specific points mentioned in the review
 - Thank the guest for their feedback
 - If there are criticisms, acknowledge them respectfully
@@ -31,16 +36,17 @@ Guidelines:
 `;
 
   try {
-    const result = streamText({
+    const result = await generateText({
       model: openai("gpt-4o-mini"),
-      system: "You are an experienced short-term rental host responding to a guest reviews.",
+      system: "You are an experienced short-term rental host responding to guest reviews.",
       prompt: prompt,
       temperature: 0.7,
       maxTokens: 500,
     });
-    return result.toDataStreamResponse();
-  } catch (err) {
-    console.error("Error generating response:", err);
-    throw new Error("Failed to generate response");
+    return json({ response: result });
+
+  } catch (error) {
+    console.error("Error:", error);
+    return json({ error: "Failed to generate response" }, { status: 500 });
   }
-}
+};

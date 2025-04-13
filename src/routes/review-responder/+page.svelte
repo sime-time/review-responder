@@ -1,6 +1,4 @@
 <script lang="ts">
-  //import { generateResponse } from "$lib/generate-response";
-
   type ResponseType = "friendly" | "professional" | "custom";
 
   let name = $state<string>("");
@@ -11,21 +9,37 @@
   let reviewResponse = $state<string>("");
 
   // generate response to review
-  async function handleSubmit(): Promise<void> {
+  async function handleGeneration(): Promise<void> {
     if (!name || !review || !rating || !tone) {
       reviewResponse = "Please insert a review, name, and tone.";
       return console.error("Invalid inputs for review");
     }
 
-    /*
     try {
-      const result = await generateResponse(review, name, rating, tone);
-      console.log(result);
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          review,
+          name,
+          rating,
+          ton: tone == "custom" ? customTonePrompt : tone,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to generate response");
+      }
+      console.log(data.response.text);
+      reviewResponse = data.response.text;
     } catch (err) {
       console.error("Error:", err);
       reviewResponse = "Failed to generate response. Please try again.";
     }
-      */
   }
 
   function copyToClipboard(): void {
@@ -50,7 +64,7 @@
       <fieldset class="fieldset">
         <legend class="fieldset-legend text-lg font-medium">Review</legend>
         <textarea
-          class="textarea h-24"
+          class="textarea h-24 w-full"
           placeholder="Insert review here..."
           value={review}
           oninput={(event) => {
@@ -95,8 +109,7 @@
         <div class="flex gap-2 text-base">
           {#each ["friendly", "professional", "custom"] as toneType}
             <button
-              class="capitalize px-3 py-1 border rounded-field {tone ===
-              toneType
+              class="capitalize px-3 py-1 border rounded-field {tone == toneType
                 ? 'bg-secondary/20 border-secondary'
                 : 'border-neutral-300'}"
               onclick={() => {
@@ -130,7 +143,7 @@
         <h2 class="text-lg font-medium">Generated Response</h2>
         <button
           class="btn btn-secondary btn-soft btn-xs"
-          onclick={copyToClipboard}
+          onclick={() => copyToClipboard()}
           disabled={!reviewResponse}
         >
           Copy
@@ -143,7 +156,10 @@
         hidden={!reviewResponse}
       ></textarea>
 
-      <button class="btn btn-secondary btn-block" onclick={handleSubmit}>
+      <button
+        class="btn btn-secondary btn-block"
+        onclick={() => handleGeneration()}
+      >
         Get New Response
       </button>
     </div>
