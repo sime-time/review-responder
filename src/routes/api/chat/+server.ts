@@ -40,8 +40,8 @@ Guidelines:
       model: openai("gpt-4o-mini"),
       system: "You are an experienced short-term rental host responding to guest reviews.",
       prompt: prompt,
-      temperature: 0.7,
-      maxTokens: 500,
+      temperature: 0.65,
+      maxTokens: 200,
     });
     return json({ response: result });
 

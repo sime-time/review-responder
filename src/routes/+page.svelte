@@ -6,8 +6,6 @@
 
   const emailMagicLink = async (e: Event) => {
     e.preventDefault();
-    console.log(sent);
-    console.log(email);
     const { data, error } = await authClient.signIn.magicLink({
       email: email,
       callbackURL: "/review-responder",

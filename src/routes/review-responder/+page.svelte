@@ -7,15 +7,18 @@
   let tone = $state<ResponseType>("friendly");
   let customTonePrompt = $state<string>("");
   let reviewResponse = $state<string>("");
+  let loading = $state<boolean>(false);
 
   // generate response to review
   async function handleGeneration(): Promise<void> {
+    loading = false;
     if (!name || !review || !rating || !tone) {
       reviewResponse = "Please insert a review, name, and tone.";
       return console.error("Invalid inputs for review");
     }
 
     try {
+      loading = true;
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: {
@@ -34,11 +37,12 @@
       if (!response.ok) {
         throw new Error(data.error || "Failed to generate response");
       }
-      console.log(data.response.text);
       reviewResponse = data.response.text;
     } catch (err) {
       console.error("Error:", err);
       reviewResponse = "Failed to generate response. Please try again.";
+    } finally {
+      loading = false;
     }
   }
 
@@ -155,10 +159,17 @@
         bind:value={reviewResponse}
         hidden={!reviewResponse}
       ></textarea>
+      {#if loading}
+        <div>
+          <span class="loading loading-spinner loading-md"></span>
+          Generating response...
+        </div>
+      {/if}
 
       <button
         class="btn btn-secondary btn-block"
         onclick={() => handleGeneration()}
+        disabled={loading}
       >
         Get New Response
       </button>
