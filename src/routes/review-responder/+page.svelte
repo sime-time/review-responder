@@ -60,7 +60,12 @@
 </script>
 
 <div class="max-w-4xl mx-auto p-4 mb-4">
-  <h1 class="text-3xl font-bold mb-6 text-neutral">AI Review Responder</h1>
+  <h1 class="text-3xl font-bold text-neutral">AI Review Responder</h1>
+  <p class="text-md my-4">
+    Copy and paste any review you've received with the reviewer's name and
+    rating. Then select what tone you want the response to have. Finally, click
+    the button the generate a response to the review.
+  </p>
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
     <!-- Review -->
@@ -95,7 +100,9 @@
 
       <!-- Name -->
       <fieldset class="fieldset">
-        <legend class="fieldset-legend text-lg font-medium">Name</legend>
+        <legend class="fieldset-legend text-lg font-medium"
+          >Reviewer Name</legend
+        >
         <input
           type="text"
           class="input"
