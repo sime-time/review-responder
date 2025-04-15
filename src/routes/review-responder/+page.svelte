@@ -49,23 +49,18 @@
   function copyToClipboard(): void {
     navigator.clipboard.writeText(reviewResponse);
   }
-
-  $effect(() => {
-    $inspect(name);
-    $inspect(review);
-    $inspect(rating);
-    $inspect(reviewResponse);
-    $inspect(customTonePrompt);
-  });
 </script>
 
 <div class="max-w-4xl mx-auto p-4 mb-4">
   <h1 class="text-3xl font-bold text-neutral">AI Review Responder</h1>
-  <p class="text-md my-4">
-    Copy and paste any review you've received with the reviewer's name and
-    rating. Then select what tone you want the response to have. Finally, click
-    the button the generate a response to the review.
-  </p>
+  <ul class="text-md my-4 list-decimal ml-4">
+    <li>
+      Copy and paste any review you've received with the reviewer's name and
+      rating.
+    </li>
+    <li>Select the tone you want the response to have.</li>
+    <li>Click the button to generate a response to the review.</li>
+  </ul>
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
     <!-- Review -->
